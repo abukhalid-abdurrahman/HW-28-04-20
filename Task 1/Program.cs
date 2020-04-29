@@ -1,4 +1,16 @@
-﻿using System;
+﻿/*
+*************************************************
+*************************************************
+*************************************************
+ID Клиента начинается с 0
+*************************************************
+*************************************************
+*************************************************
+*/
+
+
+
+using System;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -16,6 +28,11 @@ namespace Task_1
     {
         static int clientId = 0;
         static List<Client> clients = new List<Client>();
+
+        static int updatedClientId = 0;
+        static decimal lastBalance = 0;
+        static decimal newBalance = 0;
+        static bool isUpdated = false;
         static int InputId()
         {
             Console.Write("Input ID: ");
@@ -61,47 +78,64 @@ namespace Task_1
         }
         static void Update(object Id)
         {
-            Console.Write("Баланс: ");
-            decimal balance = decimal.Parse(Console.ReadLine().Replace('.', ','));
+            try
+            {
+                Console.Write("Баланс: ");
+                decimal balance = decimal.Parse(Console.ReadLine().Replace('.', ','));
 
-            Client client = FindById((int)Id);
-            Client updatedClient = new Client();
+                Client client = FindById((int)Id);
+                Client updatedClient = new Client();
 
-            updatedClient.Id = client.Id;
-            updatedClient.FirstName = client.FirstName;
-            updatedClient.Age = client.Age;
-            updatedClient.Balance = balance;
-            clients.RemoveAt((int)Id);
-            clients.Add(updatedClient);
+                isUpdated = true;
+                updatedClientId = (int)Id;
+                lastBalance = client.Balance;
+                newBalance = balance;
+
+                updatedClient.Id = client.Id;
+                updatedClient.FirstName = client.FirstName;
+                updatedClient.Age = client.Age;
+                updatedClient.Balance = balance;
+                clients.RemoveAt((int)Id);
+                clients.Add(updatedClient);
+            }
+            catch (Exception) { Console.WriteLine("ERROR, TRY AGAIN, TRY TO INPUT CORRECT CLIENT ID"); return; }
         }
         static void Delete(object Id)
         {
-            clients.RemoveAt((int)Id);
+            try
+            {
+                clients.RemoveAt((int)Id);
+            }
+            catch (Exception) { Console.WriteLine("ERROR, TRY AGAIN, TRY TO INPUT CORRECT CLIENT ID"); return; }
         }
         static void Select(object Id)
         {
-            if ((int)Id == -1)
+            try
             {
-                foreach (Client item in clients)
+                if ((int)Id == -1)
                 {
+                    foreach (Client item in clients)
+                    {
+                        Console.WriteLine("\n");
+                        Console.WriteLine($"ID: {item.Id}");
+                        Console.WriteLine($"Name: {item.FirstName}");
+                        Console.WriteLine($"Age: {item.Age}");
+                        Console.WriteLine($"Balance: {item.Balance}");
+                        Console.WriteLine("\n");
+                    }
+                }
+                else
+                {
+                    Client selectedClient = FindById((int)Id);
                     Console.WriteLine("\n");
-                    Console.WriteLine($"ID: {item.Id}");
-                    Console.WriteLine($"Name: {item.FirstName}");
-                    Console.WriteLine($"Age: {item.Age}");
-                    Console.WriteLine($"Balance: {item.Balance}");
+                    Console.WriteLine($"ID: {selectedClient.Id}");
+                    Console.WriteLine($"Name: {selectedClient.FirstName}");
+                    Console.WriteLine($"Age: {selectedClient.Age}");
+                    Console.WriteLine($"Balance: {selectedClient.Balance}");
                     Console.WriteLine("\n");
                 }
             }
-            else
-            {
-                Client selectedClient = FindById((int)Id);
-                Console.WriteLine("\n");
-                Console.WriteLine($"ID: {selectedClient.Id}");
-                Console.WriteLine($"Name: {selectedClient.FirstName}");
-                Console.WriteLine($"Age: {selectedClient.Age}");
-                Console.WriteLine($"Balance: {selectedClient.Balance}");
-                Console.WriteLine("\n");
-            }
+            catch (Exception) { Console.WriteLine("ERROR, TRY AGAIN, TRY TO INPUT CORRECT CLIENT ID"); return; }
         }
         static void UI()
         {
@@ -147,9 +181,64 @@ namespace Task_1
                 Console.WriteLine(menu);
             }
         }
+
+        static void TimerEvent(object x)
+        {
+            if (isUpdated)
+            {
+                decimal difference = lastBalance - newBalance;
+                if (difference != 0)
+                {
+                    if (lastBalance > newBalance)
+                    {
+                        char differenceChr = '-';
+                        if (difference > 0)
+                            difference = '+';
+                        else if (difference < 0)
+                        {
+                            //difference *= (-1);
+                            difference = '-';
+                        }
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"Updated ID: {updatedClientId}, Last Balance {lastBalance}, New Balance {newBalance}, Difference {difference}");
+                        Console.ResetColor();
+                    }
+                    else if (lastBalance < newBalance)
+                    {
+                        char differenceChr = '-';
+                        if (difference > 0)
+                            difference = '+';
+                        else if (difference < 0)
+                        {
+                            //difference *= (-1);
+                            difference = '-';
+                        }
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"Updated ID: {updatedClientId}, Last Balance {lastBalance}, New Balance {newBalance}, Difference {difference}");
+                        Console.ResetColor();
+                    }
+                }
+                isUpdated = false;
+            }
+        }
+        static void TimerFunctionallity()
+        {
+            TimerCallback timerCallback = new TimerCallback(TimerEvent);
+            Timer t = new Timer(TimerEvent, 0, 0, 1000);
+        }
         static void Main(string[] args)
         {
+            TimerFunctionallity();
             UI();
         }
     }
 }
+/*
+*************************************************
+*************************************************
+*************************************************
+ID Клиента начинается с 0
+*************************************************
+*************************************************
+*************************************************
+*/
