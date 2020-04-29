@@ -7,9 +7,6 @@ ID Клиента начинается с 0
 *************************************************
 *************************************************
 */
-
-
-
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -193,28 +190,28 @@ namespace Task_1
                     {
                         char differenceChr = '-';
                         if (difference > 0)
-                            difference = '+';
+                            differenceChr = '-';
                         else if (difference < 0)
                         {
-                            //difference *= (-1);
-                            difference = '-';
+                            difference *= (-1);
+                            differenceChr = '+';
                         }
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"Updated ID: {updatedClientId}, Last Balance {lastBalance}, New Balance {newBalance}, Difference {difference}");
+                        Console.WriteLine($"Updated ID: {updatedClientId}, Last Balance {lastBalance}, New Balance {newBalance}, Difference {differenceChr}{difference}");
                         Console.ResetColor();
                     }
                     else if (lastBalance < newBalance)
                     {
                         char differenceChr = '-';
                         if (difference > 0)
-                            difference = '+';
+                            differenceChr = '-';
                         else if (difference < 0)
                         {
-                            //difference *= (-1);
-                            difference = '-';
+                            difference *= (-1);
+                            differenceChr = '+';
                         }
                         Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"Updated ID: {updatedClientId}, Last Balance {lastBalance}, New Balance {newBalance}, Difference {difference}");
+                        Console.WriteLine($"Updated ID: {updatedClientId}, Last Balance {lastBalance}, New Balance {newBalance}, Difference {differenceChr}{difference}");
                         Console.ResetColor();
                     }
                 }
