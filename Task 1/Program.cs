@@ -22,7 +22,6 @@ namespace Task_1
             int Id = int.Parse(Console.ReadLine());
             return Id;
         }
-
         static Client FindById(int Id)
         {
             Client resClient = null;
@@ -47,7 +46,6 @@ namespace Task_1
         static void Insert()
         {
             Client client = new Client();
-            clientId++;
             Console.Write("Имя: ");
             string firstName = Console.ReadLine();
             Console.Write("Возраст: ");
@@ -59,8 +57,8 @@ namespace Task_1
             client.Age = age;
             client.Balance = balance;
             clients.Add(client);
+            clientId++;
         }
-
         static void Update(object Id)
         {
             Console.Write("Баланс: ");
@@ -73,8 +71,37 @@ namespace Task_1
             updatedClient.FirstName = client.FirstName;
             updatedClient.Age = client.Age;
             updatedClient.Balance = balance;
-            clients.RemoveAt((int)Id - 1);
+            clients.RemoveAt((int)Id);
             clients.Add(updatedClient);
+        }
+        static void Delete(object Id)
+        {
+            clients.RemoveAt((int)Id);
+        }
+        static void Select(object Id)
+        {
+            if ((int)Id == -1)
+            {
+                foreach (Client item in clients)
+                {
+                    Console.WriteLine("\n");
+                    Console.WriteLine($"ID: {item.Id}");
+                    Console.WriteLine($"Name: {item.FirstName}");
+                    Console.WriteLine($"Age: {item.Age}");
+                    Console.WriteLine($"Balance: {item.Balance}");
+                    Console.WriteLine("\n");
+                }
+            }
+            else
+            {
+                Client selectedClient = FindById((int)Id);
+                Console.WriteLine("\n");
+                Console.WriteLine($"ID: {selectedClient.Id}");
+                Console.WriteLine($"Name: {selectedClient.FirstName}");
+                Console.WriteLine($"Age: {selectedClient.Age}");
+                Console.WriteLine($"Balance: {selectedClient.Balance}");
+                Console.WriteLine("\n");
+            }
         }
         static void UI()
         {
@@ -100,16 +127,20 @@ namespace Task_1
                         }
                         break;
                     case "3":
-                        //Thread threadDelete = new Thread(new ThreadStart(Delete));
-                        //threadDelete.Start();
+                        {
+                            int Id = InputId();
+                            Thread threadDelete = new Thread(new ParameterizedThreadStart(Delete));
+                            threadDelete.Start(Id);
+                            threadDelete.Join();
+                        }
                         break;
                     case "4":
-                        //Thread threadSelect = new Thread(new ThreadStart(Select));
-                        //threadSelect.Start();
-                        foreach(Client c in clients)
                         {
-                            Console.WriteLine(c.Id + ": " + c.FirstName);
-                            Console.WriteLine(c.Id + ": " + c.Balance);
+                            Console.WriteLine("Input -1 To Select All Clients");
+                            int Id = InputId();
+                            Thread threadSelect = new Thread(new ParameterizedThreadStart(Select));
+                            threadSelect.Start(Id);
+                            threadSelect.Join();
                         }
                         break;
                 }
