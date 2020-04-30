@@ -48,13 +48,8 @@ namespace Task_1
                         resClient = client;
                         break;
                     }
-                    else
-                        return resClient;
                 }
             }
-            else
-                return resClient;
-
             return resClient;
         }
         static void Insert()
